@@ -1,0 +1,28 @@
+{
+  "default": {
+  },
+  "kovan": {
+    "url": "https://app.proofi.com/api/verify/",
+    "token": "0xa36085F69e2889c224210F603D836748e7dC0088",
+    "oracle": "0x74EcC8Bdeb76F2C6760eD2dc8A46ca5e581fA656",
+    "jobId": "0xc1c5e92880894eb6b27d3cae19670aa3",
+    "fee": 100000000000000000,
+    "nfts": [
+      {
+        "name": "Proofi",
+        "symbol": "PRF",
+        "baseURI": "https://app.proofi.com/nfts/proofi/"
+      },
+      {
+        "name": "Proofi NORTH",
+        "symbol": "PRN",
+        "baseURI": "https://app.proofi.com/nfts/proofi-north/"
+      },
+      {
+        "name": "Proofi SOUTH",
+        "symbol": "PRS",
+        "baseURI": "https://app.proofi.com/nfts/proofi-south/"
+      }
+    ]
+  }
+}
