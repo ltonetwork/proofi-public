@@ -2,7 +2,7 @@
   "default": {
   },
   "rinkeby": {
-    "url": "https://app.proofi.com/api/verify/",
+    "url": "https://app.proofi.com/api/verify/eip155:4/",
     "token": "0xa36085F69e2889c224210F603D836748e7dC0088",
     "oracle": "0xf3FBB7f3391F62C8fe53f89B41dFC8159EE9653f",
     "jobId": "0xc1c5e92880894eb6b27d3cae19670aa3",
@@ -26,7 +26,7 @@
     ]
   },
   "kovan": {
-    "url": "https://app.proofi.com/api/verify/",
+    "url": "https://app.proofi.com/api/verify/eip155:42/",
     "token": "0xa36085F69e2889c224210F603D836748e7dC0088",
     "oracle": "0x74EcC8Bdeb76F2C6760eD2dc8A46ca5e581fA656",
     "jobId": "0xc1c5e92880894eb6b27d3cae19670aa3",

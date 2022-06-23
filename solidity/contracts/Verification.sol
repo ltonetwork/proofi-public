@@ -19,6 +19,8 @@ abstract contract Verification is ChainlinkClient, Ownable {
     bytes32 private chainlinkJobId;
     uint256 private chainlinkFee;
 
+    event Verify(address indexed wallet);
+
     function setupVerification(
         address _provider,
         address _token,
@@ -68,7 +70,7 @@ abstract contract Verification is ChainlinkClient, Ownable {
         );
 
         request.add("method", "GET");
-        request.add("url", string(abi.encodePacked(chainlinkUrl, "/eip155/", toHexString(_addr))));
+        request.add("url", string(abi.encodePacked(chainlinkUrl, toHexString(_addr))));
         request.add("path", "approved");
 
         string[] memory headers = new string[](2);
@@ -80,6 +82,8 @@ abstract contract Verification is ChainlinkClient, Ownable {
 
         verificationRequests[requestId] = _addr;
         verified[address(_addr)] = VerificationStatus.PENDING;
+
+        emit Verify(_addr);
     }
 
     // ChainLink AnyApi callback

@@ -62,6 +62,10 @@ contract(
           truffleAssert.eventEmitted(result, "ChainlinkRequested");
         });
 
+        it("has emitted a verify event", async () => {
+          truffleAssert.eventEmitted(result, "Verify", {wallet: user1});
+        });
+
         it("minted a locked NFT for the user", async() => {
           assert.equal(user1, await nft.ownerOf(tokenId));
           assert.equal(true, await nft.isLocked(tokenId));
