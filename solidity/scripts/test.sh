@@ -49,10 +49,8 @@ fi
 
 truffle version
 
-if [ $# > 0 ]; then
+if [ $# -gt 0 ]; then
   truffle test --network test --migrate-none --runner-output-only "test/$1.test.js"
 else
-  for TEST in test/*.test.js; do
-    truffle test --network test --migrate-none --runner-output-only test/*.test.js
-  done
+  truffle test --network test --migrate-none --runner-output-only test/*.test.js
 fi

@@ -4,7 +4,7 @@ const web3 = new Web3();
 const DemoNFT = artifacts.require("./DemoNFT.sol");
 const IdentityProvider = artifacts.require("./IdentityProvider.sol");
 const MockContract = artifacts.require("./MockContract.sol");
-const linkABI = require("./abi/link.abi");
+const linkABI = require("../abi/link.abi");
 const linkToken = new web3.eth.Contract(linkABI);
 
 contract(

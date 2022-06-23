@@ -80,7 +80,7 @@ contract DemoNFT is ERC721, Ownable, Verification {
     }
 
     // Don't allow transfer of locked tokens.
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override {
+    function _beforeTokenTransfer(address, address, uint256 tokenId) internal override {
         require(!locked[tokenId], "Token is lock, please get verified");
     }
 
