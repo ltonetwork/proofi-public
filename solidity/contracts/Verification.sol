@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IProvider.sol";
+import "./IVerification.sol";
 
-abstract contract Verification is ChainlinkClient, Ownable {
+abstract contract Verification is ChainlinkClient, Ownable, IVerification {
     using Chainlink for Chainlink.Request;
 
     enum VerificationStatus { NONE, PENDING, DECLINED, APPROVED }
