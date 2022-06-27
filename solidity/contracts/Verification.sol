@@ -20,8 +20,6 @@ abstract contract Verification is ChainlinkClient, Ownable, IVerification {
     bytes32 private chainlinkJobId;
     uint256 private chainlinkFee;
 
-    event Verify(address indexed wallet);
-
     function setupVerification(
         address _provider,
         address _token,
