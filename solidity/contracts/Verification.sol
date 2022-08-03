@@ -15,7 +15,7 @@ abstract contract Verification is ChainlinkClient, Ownable, IVerification {
     mapping(bytes32 => address) private verificationRequests;
     mapping(address => VerificationStatus) private verified;
 
-    IProvider private identityProvider;
+    IProvider public identityProvider;
     string private chainlinkUrl;
     bytes32 private chainlinkJobId;
     uint256 private chainlinkFee;
