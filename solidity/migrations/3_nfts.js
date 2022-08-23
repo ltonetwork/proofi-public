@@ -11,6 +11,7 @@ module.exports = async function(deployer, network) {
 
     const provider = await IdentityProvider.deployed();
     const linkToken = new web3.eth.Contract(linkABI, config.token);
+    const ownerAddress = await provider.owner();
 
     for (let i = 0; i < config.nfts.length; i++) {
         const settings = config.nfts[i];
@@ -24,6 +25,8 @@ module.exports = async function(deployer, network) {
             config.jobId,
             Web3.utils.toBN(config.fee),
         );
-        linkToken.methods.transfer(nft.address, Web3.utils.toBN(config.fee).muln(10));
+
+        await linkToken.methods.transfer(nft.address, Web3.utils.toBN(config.fee).muln(10))
+            .send({from: ownerAddress});
     }
 };
