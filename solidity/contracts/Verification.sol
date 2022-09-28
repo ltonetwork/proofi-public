@@ -68,14 +68,9 @@ abstract contract Verification is ChainlinkClient, Ownable, IVerification {
             this.fulfillVerification.selector
         );
 
-        request.add("method", "GET");
-        request.add("url", string(abi.encodePacked(chainlinkUrl, toHexString(_addr))));
+        request.add("get",
+            string(abi.encodePacked(chainlinkUrl, toHexString(_addr), "?verifier=", toHexString(address(this)))));
         request.add("path", "approved");
-
-        string[] memory headers = new string[](2);
-        headers[0] = "X-Verifier";
-        headers[1] = toHexString(address(this));
-        request.addStringArray("headers", headers);
 
         bytes32 requestId = sendChainlinkRequest(request, chainlinkFee);
 
