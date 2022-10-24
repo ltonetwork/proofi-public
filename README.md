@@ -4,8 +4,6 @@
 
 ![proofi-banner](https://proofi.com/assets/logo/proofi-black.svg)
 
-## Description
-
 Identification for DeFi
 
 ## Structure
