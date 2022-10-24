@@ -8,9 +8,11 @@
     "migrate": "truffle migrate --compile-all --network mainnet",
     "migrate:dev": "truffle migrate --compile-all --network development",
     "migrate:rinkeby": "truffle migrate --compile-all --network rinkeby",
+    "migrate:goerli": "truffle migrate --compile-all --network goerli",
     "migrate:kovan": "truffle migrate --compile-all --network kovan",
     "verify": "truffle run verify --network mainnet",
     "verify:rinkeby": "truffle run verify --network rinkeby",
+    "verify:goerli": "truffle run verify --network goerli",
     "verify:kovan": "truffle run verify --network kovan",
     "deploy": "npm run migrate && npm run verify"
   },
