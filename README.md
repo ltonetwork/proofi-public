@@ -1,4 +1,4 @@
-![lto-banner](https://user-images.githubusercontent.com/100821/108692834-6a115200-74fd-11eb-92df-ee07bf62b386.png)
+![LTO github readme](https://user-images.githubusercontent.com/100821/197559448-73812ca5-269d-4e86-8eb7-9699540c4e5f.png)
 
 # Proofi by LTO Network
 
@@ -13,4 +13,3 @@ Identification for DeFi
 This repository contains 1 module, with its own `README.md` for configuration and running:
 
 - [/solidity](./solidity)
-
