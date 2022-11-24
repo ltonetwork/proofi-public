@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./Verification.sol";
 
 // This demo is an NFT that can only be minted by verified wallets.
-// Minted NFTs are initially locked and unlocked on verification.
+// Minted NFTs are initially reserved and unreserved on verification.
 contract DemoNFT is ERC721, Ownable, Verification {
     using Counters for Counters.Counter;
     Counters.Counter private tokenIds;
@@ -16,80 +16,98 @@ contract DemoNFT is ERC721, Ownable, Verification {
 
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) { }
 
-    mapping(uint256 => bool) private locked;
-    mapping(address => uint256[]) private lockedForOwner;
+    mapping(address => uint256) private mintedPerWallet;
+    mapping(uint256 => address) private reserved;
+    mapping(address => uint256[]) private reservedForOwner;
 
     // When a token is minted verify it using the IdentityProvider.
-    // The token is locked until verification is complete.
-    function mint() public returns (uint256) {
-        tokenIds.increment();
-        uint256 id = tokenIds.current();
+    // The token is reserved until verification is complete.
+    function mint(uint256 id) public returns (uint256) {
 
-        _safeMint(msg.sender, id);
-
-        if (!isApproved(msg.sender)) {
-            verify(msg.sender);
-            _lock(id);
+        for (uint256 i = 0; i < mintedPerWallet.length; i++){
+            require(mintedPerWallet[i] != id, "Token has already been minted.");
+            break;
         }
+        require(reserved[id] == address(0), "The token has already been reserved.");
+        require(mintedPerWallet[msg.sender] < 1, "You can only mint one NFT per person.");
 
+        if (isApproved(msg.sender)) {
+            _safeMint(msg.sender, id);
+            mintedPerWallet[msg.sender] += 1;
+        } else {
+            verify(msg.sender);
+            _reserve(msg.sender, id);
+
+        }
         return id;
     }
 
-    // Lock a token. Locked tokens can't be transferred.
-    function _lock(uint256 _id) internal {
-        locked[_id] = true;
-        lockedForOwner[ownerOf(_id)].push(_id);
+    // Lock a token. reserved tokens can't be transferred.
+    function _reserve(address _owner, uint256 _id) internal {
+        reserved[_id] = _owner;
+        reservedForOwner[_owner].push(_id);
     }
 
-    // Unlock all tokens of the address.
-    function _unlock(address _addr) internal {
-        require(lockedForOwner[_addr].length > 0, "No locked tokens");
-
-        if (isApproved(msg.sender)) {
-            onApproved(_addr);
-        } else {
-            _resetVerificationStatus(_addr);
-            verify(_addr);
-        }
+    function isAvailable(uint256 _id) public view returns (bool) {
+        return !_exists(_id) && reserved[_id] != address(0);
     }
 
-    function unlock() public {
-        _unlock(msg.sender);
-    }
-
-    function unlockFor(address _addr) public onlyOwner {
-        _unlock(_addr);
-    }
-
-    function isLocked(uint256 _id) external view returns (bool) {
-        return locked[_id];
+    function reservedFor(uint256 _id) external view returns (address) {
+        return reserved[_id];
     }
 
     // Hook from approved verification: unlock the tokens
     function onApproved(address _owner) internal override {
-        for (uint256 i = 0; i < lockedForOwner[_owner].length; i++) {
-            uint256 id = lockedForOwner[_owner][i];
-            delete locked[id];
+        for (uint256 i = 0; i < reservedForOwner[_owner].length; i++) {
+            uint256 id = reservedForOwner[_owner][i];
+            delete reserved[id];
+            _safeMint(_owner, id);
+            mintedPerWallet[_owner] += 1;
         }
 
-        delete lockedForOwner[_owner];
+        delete reservedForOwner[_owner];
+    }
+
+    function cancelReservation(uint256 _id) public {
+        address owner = reserved[_id];
+        delete reserved[_id];
+
+        if (reservedForOwner[owner].length == 1) {
+            if (reservedForOwner[owner][0] == _id) {
+                delete reservedForOwner[owner];
+            }
+        } else {
+            for (uint256 i = 0; i < reservedForOwner[owner].length; i++){
+                if (reservedForOwner[owner][i] == _id) {
+                    reservedForOwner[owner][i] = reservedForOwner[owner][reservedForOwner[owner].length - 1];
+                    reservedForOwner[owner].pop();
+                    break;
+                }
+            }
+        }
+
     }
 
     // Hook from denied verification
     function onDenied(address _owner) internal override {
+        for (uint256 i = 0; i < reservedForOwner[_owner].length; i++) {
+            uint256 id = reservedForOwner[_owner][i];
+            delete reserved[id];
+        }
+        delete reservedForOwner[_owner];
     }
 
-    // Don't allow transfer of locked tokens.
+    // Don't allow transfer of reserved tokens.
     function _beforeTokenTransfer(address, address, uint256 tokenId) internal override {
-        require(!locked[tokenId], "Token is lock, please get verified");
+        require(!reserved[tokenId], "Token is lock, please get verified");
     }
 
-    // Display locked NFT as disabled
+    // Display reserved NFT as disabled
     function tokenURI(uint256 _id) public view virtual override returns (string memory uri) {
         uri = super.tokenURI(_id);
 
-        if (locked[_id]) {
-            uri = string(abi.encodePacked(uri, ".locked"));
+        if (reserved[_id]) {
+            uri = string(abi.encodePacked(uri, ".reserved"));
         }
     }
 
