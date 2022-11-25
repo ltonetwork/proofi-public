@@ -19,21 +19,20 @@ contract DemoNFT is ERC721, Ownable, Verification {
     mapping(address => uint256) private mintedPerWallet;
     mapping(uint256 => address) private reserved;
     mapping(address => uint256[]) private reservedForOwner;
+    mapping(uint256 => bool) private mintedToken;
 
     // When a token is minted verify it using the IdentityProvider.
     // The token is reserved until verification is complete.
     function mint(uint256 id) public returns (uint256) {
 
-        for (uint256 i = 0; i < mintedPerWallet.length; i++){
-            require(mintedPerWallet[i] != id, "Token has already been minted.");
-            break;
-        }
+        require(mintedToken[id] == false, "The token has already been minted.");
         require(reserved[id] == address(0), "The token has already been reserved.");
         require(mintedPerWallet[msg.sender] < 1, "You can only mint one NFT per person.");
 
         if (isApproved(msg.sender)) {
             _safeMint(msg.sender, id);
             mintedPerWallet[msg.sender] += 1;
+            mintedToken[id] = true;
         } else {
             verify(msg.sender);
             _reserve(msg.sender, id);
@@ -63,6 +62,7 @@ contract DemoNFT is ERC721, Ownable, Verification {
             delete reserved[id];
             _safeMint(_owner, id);
             mintedPerWallet[_owner] += 1;
+            mintedToken[id] = true;
         }
 
         delete reservedForOwner[_owner];
@@ -99,14 +99,14 @@ contract DemoNFT is ERC721, Ownable, Verification {
 
     // Don't allow transfer of reserved tokens.
     function _beforeTokenTransfer(address, address, uint256 tokenId) internal override {
-        require(!reserved[tokenId], "Token is lock, please get verified");
+        require(reserved[tokenId] == address(0), "Token is lock, please get verified");
     }
 
     // Display reserved NFT as disabled
     function tokenURI(uint256 _id) public view virtual override returns (string memory uri) {
         uri = super.tokenURI(_id);
 
-        if (reserved[_id]) {
+        if (reserved[_id] != address(0)) {
             uri = string(abi.encodePacked(uri, ".reserved"));
         }
     }
