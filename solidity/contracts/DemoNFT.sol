@@ -14,7 +14,7 @@ contract DemoNFT is ERC721, Ownable, Verification {
 
     string private baseURI;
 
-    uint public price = 0.00389;
+    uint public price = 5000000000000000; // 5 dollar in wei
 
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) { }
 
