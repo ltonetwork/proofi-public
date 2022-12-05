@@ -14,6 +14,8 @@ contract DemoNFT is ERC721, Ownable, Verification {
 
     string private baseURI;
 
+    uint public price = 0.00389;
+
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) { }
 
     mapping(address => uint256) private mintedPerWallet;
@@ -23,11 +25,12 @@ contract DemoNFT is ERC721, Ownable, Verification {
 
     // When a token is minted verify it using the IdentityProvider.
     // The token is reserved until verification is complete.
-    function mint(uint256 id) public returns (uint256) {
+    function mint(uint256 id) public payable returns (uint256) {
 
         require(mintedToken[id] == false, "The token has already been minted.");
         require(reserved[id] == address(0), "The token has already been reserved.");
         require(mintedPerWallet[msg.sender] < 1, "You can only mint one NFT per person.");
+        require(price <= msg.value, "Insufficient funds.");
 
         if (isApproved(msg.sender)) {
             _safeMint(msg.sender, id);
@@ -118,5 +121,9 @@ contract DemoNFT is ERC721, Ownable, Verification {
 
     function _baseURI() internal view virtual override returns (string memory) {
         return baseURI;
+    }
+
+    function setPrice(uint256 _price) external onlyOwner {
+        price = _price;
     }
 }
