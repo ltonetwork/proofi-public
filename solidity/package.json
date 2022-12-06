@@ -1,5 +1,9 @@
 {
-  "main": "truffle.js",
+  "name": "@proofi/contracts",
+  "version": "0.0.0",
+  "exports": {
+    "./": "./contracts"
+  },
   "directories": {
     "test": "test"
   },

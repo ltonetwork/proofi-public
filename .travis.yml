@@ -1,0 +1,62 @@
+language: node_js
+node_js:
+  - 16
+
+branches:
+  only:
+    - master
+    - /^v\d+\.\d+\.\d+$/
+
+before_install:
+  - git config --local user.name "LTO Network"
+  - git config --local user.email "info@ltonetwork.com"
+
+jobs:
+  include:
+    - name: "Solidity tests"
+      stage: test
+      if: tag IS blank
+      before_install:
+        - cd solidity
+      install:
+        - npm install
+      script:
+        - npm test
+
+    - name: "Publish GitHub release"
+      stage: deploy
+      if: branch = master AND type = push
+      before_script:
+        - CURRENT_VERSION=$(git describe --tags --abbrev=0)
+        - |
+          if (git log $CURRENT_VERSION..HEAD | grep -q -i "\[bump:major\]"); then
+            NEXT_VERSION=$(awk -F. -v OFS=. '{$1++;$2=0;$3=0;print}' <<< "$CURRENT_VERSION")
+          elif (git log $CURRENT_VERSION..HEAD | grep -q -i "\[bump:minor\]"); then
+            NEXT_VERSION=$(awk -F. -v OFS=. '{$2++;$3=0;print}' <<< "$CURRENT_VERSION")
+          else
+            NEXT_VERSION=$(awk -F. -v OFS=. '{$3++;print}' <<< "$CURRENT_VERSION")
+          fi
+      script:
+        - git tag "$NEXT_VERSION"
+      deploy:
+        provider: releases
+        api_key:
+          secure: "ZU4dTPNDENjGyJLI4/Fvvd1XiC9oB22jlRlFS1+wWx/qYif6YAepDdkgfcmncBjcBvr8xpv0QWER3d9zf8dpy6xX/iFE35QmbDTrLfYSsbghOzDllUDkxh7hDYc0MsmpsIxgcILPZcV3WxueRwFrXvnefY5Vf9pbOY2fGecp/h3Oq2wnOgNHhzdEnmzV4aq3sXeueHxhQbE809sRdf8o579eEynVFVEHW/ar2YHgNQa2eYa9ScSTl6IPbEPU/XUkD8DbwPn+KRyKxKUTA9fw2UY/VESANbpluevEYm1XZewJ678kQd6ctmvGUDIevIzzrTu7SWmSjRcO7HrbVUGvsvJJ9AQAFZzT0CEbg7tU6UfMNRbSxr6JXRCgRkpMLF7btvYKJR0v24SBEhCy5+OyWtSPKIBjK8LJVLbDVjS0qEYI6A0xuIynFKZTEjMfQE6WNQ4e1Pdw8xNpEkK0GzdBAfoQEcPoPVlflKYZrhxwi2PHPu4h4mKjIdZEzXMH64ascR4/netLGMirrbOypLuEK1JfyQGm0tmP6NBtbqZsw2yQIgrLWMFnbUzOsTq4W2bE0xpk0mt9dmYs/Hf4FbUQsjNHC9rJMxy0w5acKTaFim7bjw3uYjwsKbA7yOquyViJYHFeNI70dprh3JKTWhh8BIUtwpSHnyrLG+jnn5cvbB0="
+        skip_cleanup: true
+        on:
+          all_branches: true
+
+    - name: "Publish solidity to NPM"
+      stage: deploy
+      if: tag IS present
+      before_install:
+        - cd solidity
+        - npm version $TRAVIS_TAG --no-git-tag-version
+      deploy:
+        provider: npm
+        email: andrea@ltonetwork.com
+        api_key:
+          secure: "PMw+7O2NnWbsCbNHh3PRpkl83eoeile/a2oSvu1qD923jJrYV+D8N9TQ7Bchvgy5Xv/FzcsTY1agnLlgFde3bHNsPyyEUZfTuHban4FTWl7H4ckIG9zqSLeAXXhNDnM7oRGjDpYY8l+UgVwspx/BZKHo5mXn+e8nYNagHEBtsQ0tirPzStOjxZhI8qfyC9rE+oMlQ6f2FPxFNNVioy3R+OQtb1V4Ifjy3jjGorw7jO18W8Yr5fqTOh7d0duCc7QAe3kyoGwG74GQ+GH+WTCHUzTreff3YGqQuwTBRRdzdXG3mVmN2l6IItadWMPcKU0hZn+RzPmK5BtklCkb/WQxCMgPrxaA8zDpAzFuAIYNq6Kvpo9f225YNHPvIhLKm9DjVFGDykwzwp3H8HtGjE4amx8h0om+9K3nCZ4w+/HVfY7ZVmKcDiJkaXPVSbUeKGrfHLoGRzuHTvgJQ28Ufh3cLdSEiMO6pJMS8aEx0+7gS0VKSyWM6mlak0tYBXgDtpQc7RME8o58/7Jhqh0AQIIq98kwPMA4O9tbbsW8FsNfq1lNxgahzjWfK0f6A9dQ5FKJlt+ZRGRQfNpwofF4AXzHUHvTkfdNvKIwwcbm3VQqC+x/FOtWwlxgT/4jdXJn1xuwpCSB0YoverwlBx6xdGzk14KbrgL98Rk97X+svZqok/M="
+        on:
+          tags: true
+        skip_cleanup: true
