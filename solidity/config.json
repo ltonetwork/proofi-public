@@ -72,5 +72,29 @@
         "baseURI": "https://app.proofi.com/nfts/proofi-south/"
       }
     ]
+  },
+  "test_bsc": {
+    "url": "https://app.proofi.com/api/verify/eip155:97/",
+    "token": "0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06",
+    "oracle": "0xCC79157eb46F5624204f47AB42b3906cAA40eaB7",
+    "jobId": "0xc1c5e92880894eb6b27d3cae19670aa3",
+    "fee": 100000000000000000,
+    "nfts": [
+      {
+        "name": "Proofi",
+        "symbol": "GLOBAL",
+        "baseURI": "https://app.proofi.com/nfts/proofi/"
+      },
+      {
+        "name": "Proofi NORTH",
+        "symbol": "NORTH",
+        "baseURI": "https://app.proofi.com/nfts/proofi-north/"
+      },
+      {
+        "name": "Proofi SOUTH",
+        "symbol": "SOUTH",
+        "baseURI": "https://app.proofi.com/nfts/proofi-south/"
+      }
+    ]
   }
 }

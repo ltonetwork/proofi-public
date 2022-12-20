@@ -48,7 +48,31 @@ module.exports = {
                 )
             },
             network_id: 42
-        }
+        },
+        test_bsc: {
+            provider: function() {
+                return new HDWalletProvider(
+                    process.env.MNEMONIC,
+                    `https://data-seed-prebsc-1-s1.binance.org:8545`
+                )
+            },
+            network_id: 97,
+            confirmations: 10,
+            timeoutBlocks: 200,
+            skipDryRun: true
+        },
+        bsc: {
+            provider: function() {
+                return new HDWalletProvider(
+                    process.env.MNEMONIC,
+                    `https://bsc-dataseed1.binance.org`
+                )
+            },
+            network_id: 56,
+            confirmations: 10,
+            timeoutBlocks: 200,
+            skipDryRun: true
+        },
     },
 
     compilers: {
@@ -66,6 +90,7 @@ module.exports = {
     ],
 
     api_keys: {
+        bscscan: process.env.BSCSCAN_API_KEY,
         etherscan: process.env.ETHERSCAN_API_KEY
     }
 };
