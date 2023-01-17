@@ -72,5 +72,10 @@
         "baseURI": "https://app.proofi.com/nfts/proofi-south/"
       }
     ]
+  },
+  "mainnet": {
+    "url": "https://app.proofi.com/api/verify/eip155:1/"
   }
 }
+
+

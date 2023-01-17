@@ -15,12 +15,12 @@
     "verify:rinkeby": "truffle run verify --network rinkeby",
     "verify:goerli": "truffle run verify --network goerli",
     "verify:kovan": "truffle run verify --network kovan",
-    "deploy": "npm run migrate && npm run verify"
+    "deploy": "npm run migrate && npm run verify IdentityProvider"
   },
   "license": "ISC",
   "publishConfig": {
     "access": "public"
-  },  
+  },
   "dependencies": {
     "@chainlink/contracts": "^0.3.1",
     "@openzeppelin/contracts": "^4.4.0"
